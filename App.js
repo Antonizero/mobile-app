@@ -41,8 +41,19 @@ const App = () => {
     }
   };
 
-  const handleEditTodo = (newValue) => {
-    console.log('newValue: ', newValue);
+  const handleEditTodo = async (newData, _id) => {
+    try {
+      const options = {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({data: newData}),
+      };
+      await fetch(`${api_url}/todo/${_id}`, options);
+      fetchTodos(api_url);
+      setIsModal({visible: false, add: false, edit: false, todo: {}});
+    } catch (error) {
+      throw new Error(error);
+    }
   };
 
   const modalContent = () => {
@@ -57,7 +68,9 @@ const App = () => {
             />
             <Button
               title="submit changes"
-              onPress={() => handleEditTodo(inputValue)}
+              onPress={() =>
+                handleEditTodo(inputValue, isModal.todo && isModal.todo._id)
+              }
             />
           </View>
         ) : (
