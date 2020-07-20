@@ -53,6 +53,7 @@ const App = () => {
             <TextInput
               placeholder="editing ..."
               onChangeText={(value) => setInputValue(value)}
+              value={inputValue}
             />
             <Button
               title="submit changes"
@@ -98,14 +99,15 @@ const App = () => {
               </View>
               <View style={styles.todoBody}>
                 <Text
-                  onPress={() =>
+                  onPress={() => {
+                    setInputValue(body);
                     setIsModal({
                       visible: true,
                       add: false,
                       edit: true,
                       todo: {_id, body},
-                    })
-                  }>
+                    });
+                  }}>
                   {body}
                 </Text>
               </View>
