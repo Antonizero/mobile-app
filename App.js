@@ -35,6 +35,7 @@ const App = () => {
         body: JSON.stringify({data}),
       };
       await fetch(`${api_url}/todo`, options);
+      setIsModal({visible: false, add: false, edit: false, todo: {}});
       fetchTodos(api_url);
     } catch (error) {
       throw new Error(error);
@@ -42,15 +43,28 @@ const App = () => {
   };
 
   const handleEditTodo = async (newData, _id) => {
+    const options = {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({data: newData}),
+    };
     try {
-      const options = {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({data: newData}),
-      };
       await fetch(`${api_url}/todo/${_id}`, options);
       fetchTodos(api_url);
       setIsModal({visible: false, add: false, edit: false, todo: {}});
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
+
+  const handleDeleteTodo = async (id) => {
+    const options = {
+      method: 'DELETE',
+      headers: {'Content-Type': 'application/json'},
+    };
+    try {
+      await fetch(`${api_url}/todo/${id}`, options);
+      fetchTodos(api_url);
     } catch (error) {
       throw new Error(error);
     }
@@ -130,7 +144,11 @@ const App = () => {
                   ...styles.todoButton,
                   backgroundColor: 'rgba(255, 0, 0, 0.1)',
                 }}>
-                <Text style={styles.centerText}>✖︎</Text>
+                <Text
+                  onPress={() => handleDeleteTodo(_id)}
+                  style={styles.centerText}>
+                  ✖︎
+                </Text>
               </View>
             </View>
           );
