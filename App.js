@@ -36,6 +36,7 @@ const App = () => {
       };
       await fetch(`${api_url}/todo`, options);
       setIsModal({visible: false, add: false, edit: false, todo: {}});
+      setInputValue('');
       fetchTodos(api_url);
     } catch (error) {
       throw new Error(error);
@@ -50,8 +51,24 @@ const App = () => {
     };
     try {
       await fetch(`${api_url}/todo/${_id}`, options);
-      fetchTodos(api_url);
       setIsModal({visible: false, add: false, edit: false, todo: {}});
+      setInputValue('');
+      fetchTodos(api_url);
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
+
+  const handleToggleTodo = async (status, _id) => {
+    const options = {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+    };
+    try {
+      await fetch(`${api_url}/toggletodo/${_id}?done=${!status}`, options);
+      setIsModal({visible: false, add: false, edit: false, todo: {}});
+      setInputValue('');
+      fetchTodos(api_url);
     } catch (error) {
       throw new Error(error);
     }
@@ -113,7 +130,7 @@ const App = () => {
   const renderTodos = () => {
     return (
       <View>
-        {todos.map(({_id, body}, index) => {
+        {todos.map(({_id, body, done}, index) => {
           return (
             <View style={styles.todo} key={index}>
               <View
@@ -122,7 +139,11 @@ const App = () => {
                   ...styles.todoButton,
                   backgroundColor: 'rgba(0, 255, 0, 0.1)',
                 }}>
-                <Text style={styles.centerText}>✔</Text>
+                <Text
+                  style={styles.centerText}
+                  onPress={() => handleToggleTodo(done, _id)}>
+                  {done ? '✔' : '❏'}
+                </Text>
               </View>
               <View style={styles.todoBody}>
                 <Text
